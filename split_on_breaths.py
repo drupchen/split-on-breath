@@ -143,10 +143,11 @@ def generate_srt(breaths, duration, output_path):
 
     print(f"SRT saved to: {output_path}")
 
+
 # --- CONFIGURATION ---
-INPUT_AUDIO = Path('/media/drupchen/Khyentse Önang/Public Talks/079 A-Kyabje Dilgo Khyentse Rinpoche-Public teaching/079 A-Kyabje Dilgo Khyentse Rinpoche-Public teaching_1.wav')  # The file you want to split
+INPUT_AUDIO_PATH = Path('/run/media/drupchen/Khyentse Önang/K-Ö Archives/Transcriptions/སྙིང་ཐིག་མ་བུའི་ཁྲིད་ཡིག་དྲི་མེད་ཞལ་ལུང་།/')  # The file you want to split
 MODEL_PATH = "split_on_inbreaths_model.pkl"  # The model you just trained
-OUTPUT_SRT = INPUT_AUDIO.parent / (INPUT_AUDIO.stem + '.srt')
+
 
 # --- TUNING KNOBS ---
 # 1. BREATH SENSITIVITY (0.0 to 1.0)
@@ -166,5 +167,9 @@ if __name__ == "__main__":
     if not os.path.exists(MODEL_PATH):
         print("Model file not found! Please train it first.")
     else:
-        breaths, dur = scan_audio(INPUT_AUDIO, MODEL_PATH)
-        generate_srt(breaths, dur, OUTPUT_SRT)
+        for f in Path(INPUT_AUDIO_PATH).glob("*.wav"):
+            if "09" not in f.stem:
+                continue
+            OUTPUT_SRT = INPUT_AUDIO_PATH / (f.stem + '.srt')
+            breaths, dur = scan_audio(f, MODEL_PATH)
+            generate_srt(breaths, dur, OUTPUT_SRT)
